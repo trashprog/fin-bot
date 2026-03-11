@@ -1,23 +1,12 @@
-import asyncio
 import telegram
 import os
 from dotenv import load_dotenv
 import logging
 from telegram import Update, InlineQueryResultArticle, InputTextMessageContent
 from telegram.ext import filters, MessageHandler, ApplicationBuilder, CommandHandler, ContextTypes, InlineQueryHandler
-from uuid import uuid4
 import finnhub
-import os
-import pandas as pd
-import requests
 from datetime import datetime, timezone, timedelta
-import feedparser
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from datetime import datetime
-from urllib.parse import quote
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
-import torch
-import numpy as np
 
 load_dotenv()
 token = os.getenv("TOKEN")
