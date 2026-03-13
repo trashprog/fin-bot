@@ -1,6 +1,8 @@
 python-telegram-bot==20.7
 python-dotenv==1.0.1
 finnhub-python==2.4.20
+fastapi==0.111.1
+uvicorn==0.25.0
 
 
 # beautifulsoup4==4.13.4

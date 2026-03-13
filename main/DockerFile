@@ -11,6 +11,8 @@ ENV PATH="/main/.venv/bin:$PATH"
 
 COPY main.py .
 
+ENV PORT=8080
+
 ENTRYPOINT ["python", "main.py"]
 
 

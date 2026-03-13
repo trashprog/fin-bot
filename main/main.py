@@ -5,8 +5,12 @@ import logging
 from telegram import Update, InlineQueryResultArticle, InputTextMessageContent
 from telegram.ext import filters, MessageHandler, ApplicationBuilder, CommandHandler, ContextTypes, InlineQueryHandler
 import finnhub
+import asyncio
 from datetime import datetime, timezone, timedelta
 from datetime import datetime
+from fastapi import FastAPI
+import uvicorn
+import asyncio
 
 load_dotenv()
 token = os.getenv("TOKEN")
@@ -97,20 +101,48 @@ async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.effective_chat.id, text="idk zro")
 
 
-# run the bot
-if __name__ == '__main__':
+# app
 
-    # handlers
+app = FastAPI()
+
+@app.get("/")
+def health_check():
+    return {"status": "bot running"}
+
+async def start_bot():
+    token = os.getenv("TOKEN")
     application = ApplicationBuilder().token(token).build()
-    news_handler = CommandHandler('news', news)
-    search_handler = CommandHandler('search', news_search)
-    unknown_handler = MessageHandler(filters.COMMAND, unknown)
 
-    # tell bot to listen to start commands
-    start_handler = CommandHandler('start', start)
-    application.add_handler(start_handler)
-    application.add_handler(news_handler)
-    application.add_handler(search_handler)
-    application.add_handler(unknown_handler)
-    
-    application.run_polling()   
+    # Handlers
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("news", news))
+    application.add_handler(CommandHandler("search", news_search))
+    application.add_handler(MessageHandler(filters.COMMAND, unknown))
+
+    # Initialize/start bot without messing with the loop
+    await application.initialize()
+    await application.start()
+    await application.updater.start_polling()
+
+    print("Bot is polling...")
+
+    try:
+        await asyncio.Event().wait()  # keep alive
+    finally:
+        await application.updater.stop()
+        await application.stop()
+        await application.shutdown()
+
+async def main():
+    bot_task = asyncio.create_task(start_bot())
+
+    # Setup uvicorn server
+    config = uvicorn.Config(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), log_level="info")
+    server = uvicorn.Server(config)
+
+    api_task = asyncio.create_task(server.serve())
+
+    await asyncio.gather(bot_task, api_task)
+
+if __name__ == "__main__":
+    asyncio.run(main())
