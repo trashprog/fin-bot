@@ -9,7 +9,7 @@ urls = list(set([news['url'] for news in cached_news_metadata if news['url'] not
 
 print(f"processing {len(urls)} urls")
 completed = 0
-with concurrent.futures.ThreadPoolExecutor(max_workers=7) as executor:
+with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
     # Start the load operations and mark each future with its URL
     future_to_url = {executor.submit(utils.load_url, url, 30): url for url in urls}
     for future in concurrent.futures.as_completed(future_to_url):

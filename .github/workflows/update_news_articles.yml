@@ -36,7 +36,7 @@ jobs:
         run: python main/update_news_metadata.py
 
       - name: Update news articles
-        run: python main/update_news_metadata.py
+        run: python main/update_news_articles.py
 
       - name: Resolve partial articles
         run: python main/resolve_partial_articles.py
