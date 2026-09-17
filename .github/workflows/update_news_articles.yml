@@ -28,6 +28,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r main/requirements.txt
 
+      - name: Install Playwright Chromium
+        run: |
+          playwright install chromium
+
       - name: Update news metadata
         run: python main/update_news_metadata.py
 
