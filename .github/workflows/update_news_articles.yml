@@ -1,0 +1,38 @@
+name: Update News Articles
+on:
+  schedule:
+  # run every day at 00:00 UTC, which is 8:00 AM Singapore time (SGT)
+  - cron: '0 0 * * *'
+
+  # Allow manual trigger for testing
+  workflow_dispatch:
+
+jobs:
+  update-events-json:
+    runs-on: ubuntu-latest
+
+    env:
+      FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r main/requirements.txt
+
+      - name: Update news metadata
+        run: python main/update_news_metadata.py
+
+      - name: Update news articles
+        run: python main/update_news_metadata.py
+
+      - name: Resolve partial articles
+        run: python main/resolve_partial_articles.py
