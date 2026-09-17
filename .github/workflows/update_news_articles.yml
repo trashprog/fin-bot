@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-events-json:
+  update-news-articles:
     runs-on: ubuntu-latest
 
     env:
