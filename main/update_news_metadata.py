@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 import finnhub
 import utils
+import time
 
 # constants
 
@@ -40,6 +41,8 @@ for code in us_company_codes:
         print(f"company {code} processed! Total of {len(news)} news")
     except Exception as e:
         print('error processing: '+ code + f"\n{e}")
+
+    time.sleep(0.05) # wait 0.05 sec before next req since 1/30 = 0.033, 0.05 make it 20reqs/sec
 
 dedup_news_metadata = list({article['id']: article for article in news_metadata}.values())
 utils.overwrite_news_metadata(dedup_news_metadata)
